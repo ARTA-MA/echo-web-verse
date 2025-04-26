@@ -25,21 +25,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change event:', event);
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Show toast based on auth events
+        if (event === 'SIGNED_IN') {
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully signed in.",
+          });
+        } else if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Signed out",
+            description: "You have been successfully signed out.",
+          });
+        } else if (event === 'USER_UPDATED') {
+          toast({
+            title: "Account updated",
+            description: "Your account has been updated.",
+          });
+        }
+        
         setLoading(false);
       }
     );
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session ? 'Session exists' : 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [toast]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -49,11 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error) throw error;
-      
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
-      });
     } catch (error: any) {
       toast({
         title: "Error signing in",
@@ -66,21 +82,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, username: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             username,
           },
+          emailRedirectTo: window.location.origin,
         },
       });
 
       if (error) throw error;
 
+      // If email confirmation is disabled, user will be automatically signed in
+      if (data.session) {
+        setSession(data.session);
+        setUser(data.user);
+      }
+
       toast({
         title: "Welcome to EchoWeb!",
-        description: "Your account has been created successfully.",
+        description: data.session 
+          ? "Your account has been created successfully." 
+          : "Please check your email to confirm your account.",
       });
     } catch (error: any) {
       toast({
@@ -96,11 +121,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
     } catch (error: any) {
       toast({
         title: "Error signing out",
