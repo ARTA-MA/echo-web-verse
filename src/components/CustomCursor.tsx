@@ -5,59 +5,69 @@ const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+  const [isOverClickable, setIsOverClickable] = useState(false);
 
   useEffect(() => {
     const updatePosition = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
-      
-      if (!isVisible) setIsVisible(true);
-      
-      // Check if hovering over clickable elements
-      const target = e.target as HTMLElement;
-      const isClickable = target.tagName === 'A' || 
-                          target.tagName === 'BUTTON' || 
-                          target.closest('a') || 
-                          target.closest('button') ||
-                          target.getAttribute('role') === 'button';
-      
-      setIsHovering(isClickable);
     };
-    
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
-    
-    document.addEventListener("mousemove", updatePosition);
-    document.addEventListener("mousedown", handleMouseDown);
-    document.addEventListener("mouseup", handleMouseUp);
-    document.addEventListener("mouseleave", handleMouseLeave);
-    document.addEventListener("mouseenter", handleMouseEnter);
-    
-    return () => {
-      document.removeEventListener("mousemove", updatePosition);
-      document.removeEventListener("mousedown", handleMouseDown);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      document.removeEventListener("mouseenter", handleMouseEnter);
-    };
-  }, [isVisible]);
 
-  // Don't render on mobile devices
-  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    const handleMouseEnter = () => {
+      setIsVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsVisible(false);
+    };
+
+    const handleMouseDown = () => {
+      setIsClicking(true);
+    };
+
+    const handleMouseUp = () => {
+      setIsClicking(false);
+    };
+
+    const handleElementHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isLink = 
+        target.tagName === "A" || 
+        target.tagName === "BUTTON" || 
+        target.closest("a") || 
+        target.closest("button");
+      
+      setIsOverClickable(!!isLink);
+    };
+
+    window.addEventListener("mousemove", updatePosition);
+    window.addEventListener("mouseenter", handleMouseEnter);
+    window.addEventListener("mouseleave", handleMouseLeave);
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mouseover", handleElementHover);
+
+    return () => {
+      window.removeEventListener("mousemove", updatePosition);
+      window.removeEventListener("mouseenter", handleMouseEnter);
+      window.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mouseover", handleElementHover);
+    };
+  }, []);
+
+  if (typeof window === "undefined" || !isVisible) {
     return null;
   }
 
   return (
     <div
-      className="custom-cursor"
+      className={`custom-cursor ${isClicking ? "scale-75" : ""} ${
+        isOverClickable ? "bg-purple-500/40 scale-150" : ""
+      }`}
       style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        opacity: isVisible ? 1 : 0,
-        transform: `translate(-50%, -50%) scale(${isClicking ? 0.8 : isHovering ? 1.5 : 1})`,
-        backgroundColor: isHovering ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.15)',
+        left: position.x,
+        top: position.y,
       }}
     />
   );

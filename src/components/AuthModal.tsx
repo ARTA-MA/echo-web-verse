@@ -1,11 +1,17 @@
 
 import { useState, useEffect } from "react";
-import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const AuthModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -86,17 +92,17 @@ const AuthModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <Dialog.Content className="sm:max-w-[425px] bg-white dark:bg-gray-900 animate-fade-in">
-        <Dialog.Header>
-          <Dialog.Title className="text-center text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+      <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 animate-fade-in">
+        <DialogHeader>
+          <DialogTitle className="text-center text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
             {activeTab === "login" ? "Welcome Back" : "Join EchoWeb"}
-          </Dialog.Title>
-          <Dialog.Description className="text-center text-muted-foreground">
+          </DialogTitle>
+          <DialogDescription className="text-center text-muted-foreground">
             {activeTab === "login"
               ? "Enter your credentials to access your account"
               : "Create an account to get started"}
-          </Dialog.Description>
-        </Dialog.Header>
+          </DialogDescription>
+        </DialogHeader>
         
         <Tabs defaultValue={activeTab} value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "register")} className="mt-5">
           <TabsList className="grid grid-cols-2">
@@ -204,7 +210,7 @@ const AuthModal = () => {
             </form>
           </TabsContent>
         </Tabs>
-      </Dialog.Content>
+      </DialogContent>
     </Dialog>
   );
 };
