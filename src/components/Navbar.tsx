@@ -1,14 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon, MenuIcon, XIcon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,12 +67,26 @@ const Navbar = () => {
               )}
             </Button>
             
-            <Button variant="outline" className="ml-4" onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'login' } }))}>
-              Log in
-            </Button>
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'register' } }))}>
-              Sign up
-            </Button>
+            {user ? (
+              <Button variant="outline" onClick={signOut}>
+                Sign out
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'login' } }))}
+                >
+                  Log in
+                </Button>
+                <Button 
+                  className="bg-purple-600 hover:bg-purple-700"
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'register' } }))}
+                >
+                  Sign up
+                </Button>
+              </>
+            )}
           </div>
           
           <div className="md:hidden">
@@ -96,18 +111,26 @@ const Navbar = () => {
               Comments
             </Link>
             <div className="pt-2 flex items-center justify-between">
-              <Button variant="outline" className="w-1/2 mr-2" onClick={() => {
-                setIsMenuOpen(false);
-                window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'login' } }));
-              }}>
-                Log in
-              </Button>
-              <Button className="w-1/2 bg-purple-600 hover:bg-purple-700" onClick={() => {
-                setIsMenuOpen(false);
-                window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'register' } }));
-              }}>
-                Sign up
-              </Button>
+              {user ? (
+                <Button variant="outline" className="w-full" onClick={signOut}>
+                  Sign out
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" className="w-1/2 mr-2" onClick={() => {
+                    setIsMenuOpen(false);
+                    window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'login' } }));
+                  }}>
+                    Log in
+                  </Button>
+                  <Button className="w-1/2 bg-purple-600 hover:bg-purple-700" onClick={() => {
+                    setIsMenuOpen(false);
+                    window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'register' } }));
+                  }}>
+                    Sign up
+                  </Button>
+                </>
+              )}
             </div>
             <div className="flex items-center justify-center pt-2">
               <Button

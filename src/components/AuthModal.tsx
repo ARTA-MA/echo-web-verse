@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AuthModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +23,7 @@ const AuthModal = () => {
     confirmPassword: "",
   });
   const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const { toast } = useToast();
+  const { signIn, signUp } = useAuth();
 
   // Listen for custom events to open the modal
   useEffect(() => {
@@ -55,39 +54,28 @@ const AuthModal = () => {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would communicate with our backend
-    console.log("Login attempt with:", loginData);
-    
-    toast({
-      title: "Login Successful",
-      description: "Welcome back to EchoWeb!",
-    });
-    
-    setIsOpen(false);
+    try {
+      await signIn(loginData.email, loginData.password);
+      setIsOpen(false);
+    } catch (error) {
+      // Error is handled in the auth context
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!passwordsMatch) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match!",
-        variant: "destructive"
-      });
       return;
     }
 
-    // In a real implementation, this would communicate with our backend
-    console.log("Registration attempt with:", registerData);
-    
-    toast({
-      title: "Registration Successful",
-      description: "Your account has been created!",
-    });
-    
-    setIsOpen(false);
+    try {
+      await signUp(registerData.email, registerData.password, registerData.username);
+      setIsOpen(false);
+    } catch (error) {
+      // Error is handled in the auth context
+    }
   };
 
   return (
