@@ -308,7 +308,7 @@ const Index = () => {
               detail: {
                 type: 'login'
               }
-            }))} className="border-white text-white bg-neutral-700 hover:bg-neutral-600">
+            }))} className="border-white text-white bg-gray-900 hover:bg-gray-800">
                 Login
               </MotionButton>
             </div>
