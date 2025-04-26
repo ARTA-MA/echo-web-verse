@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 
 const MotionDiv = motion.div;
 const MotionLink = motion(Link);
+const MotionButton = motion(Button);
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -182,21 +183,21 @@ const Navbar = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <Button 
+                  <MotionButton 
                     className="bg-purple-600 hover:bg-purple-700"
                     onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { type: 'register' } }))}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     Sign up
-                  </Button>
+                  </MotionButton>
                 </motion.div>
               </>
             )}
           </div>
           
           <div className="md:hidden">
-            <Button 
+            <MotionButton 
               variant="ghost" 
               size="icon" 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -208,7 +209,7 @@ const Navbar = () => {
               ) : (
                 <MenuIcon className="h-5 w-5" />
               )}
-            </Button>
+            </MotionButton>
           </div>
         </div>
       </div>
