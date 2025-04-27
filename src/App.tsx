@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
 import CustomCursor from "./components/CustomCursor";
+import BackgroundAnimation from "./components/BackgroundAnimation";
 
 const queryClient = new QueryClient();
 
@@ -25,16 +26,19 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <CustomCursor />
-            <Navbar />
-            <AuthModal />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/comments" element={<Comments />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Footer />
+            <div className="relative min-h-screen">
+              <BackgroundAnimation />
+              <CustomCursor />
+              <Navbar />
+              <AuthModal />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/comments" element={<Comments />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Footer />
+            </div>
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
