@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowDownIcon, ArrowRightIcon, Smartphone, Sparkles, Sun } from "lucide-react";
@@ -13,6 +14,7 @@ const Index = () => {
   const [scrollY, setScrollY] = useState(0);
   const { user } = useAuth();
   const username = user?.user_metadata?.username || "Guest";
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +34,10 @@ const Index = () => {
     }
   };
 
+  const handleLearnMore = () => {
+    navigate("/about");
+  };
+
   const scrollToFeatures = () => {
     window.scrollTo({
       top: window.innerHeight,
@@ -43,16 +49,13 @@ const Index = () => {
     <div className="min-h-screen overflow-x-hidden">
       <BackgroundAnimation />
       
-      {/* Hero Section with Enhanced Parallax Effect */}
       <div ref={heroRef} className="relative flex flex-col items-center justify-center min-h-screen">
-        {/* Enhanced Background elements with parallax effect */}
         <MotionDiv
           className="absolute inset-0 z-0"
           style={{ opacity: 1 - scrollY / 700 }}
           animate={{ backgroundPosition: `${scrollY * 0.05}px ${scrollY * 0.05}px` }}
         />
         
-        {/* Hero content with enhanced animations */}
         <div className="container relative z-10 mx-auto px-4 text-center mt-16 md:mt-24">
           <MotionDiv
             initial={{ opacity: 0, y: 20 }}
@@ -99,6 +102,7 @@ const Index = () => {
               <MotionButton
                 variant="outline"
                 className="hover-scale relative overflow-hidden"
+                onClick={handleLearnMore}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, x: 20 }}
@@ -129,7 +133,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Features Section with animations */}
       <section className="py-24 relative">
         <BackgroundAnimation className="opacity-50" />
         <div className="container mx-auto px-4">
@@ -189,7 +192,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section with enhanced gradient and animations */}
       <section className="py-24 relative overflow-hidden">
         <BackgroundAnimation className="opacity-30" />
         <div className="container relative z-10 mx-auto px-4 text-center">

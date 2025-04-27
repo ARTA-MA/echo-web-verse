@@ -5,9 +5,11 @@ import { MoonIcon, SunIcon, MenuIcon, XIcon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
+
 const MotionDiv = motion.div;
 const MotionLink = motion(Link);
 const MotionButton = motion(Button);
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +22,7 @@ const Navbar = () => {
     signOut
   } = useAuth();
   const location = useLocation();
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -34,12 +37,10 @@ const Navbar = () => {
     };
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  // Animation variants
   const navItemVariants = {
     hidden: {
       opacity: 0,
@@ -96,6 +97,7 @@ const Navbar = () => {
     path: "/comments",
     label: "Comments"
   }];
+
   return <MotionDiv initial={{
     y: -100
   }} animate={{
@@ -110,7 +112,9 @@ const Navbar = () => {
           scale: 1.05
         }} whileTap={{
           scale: 0.95
-        }}>Arta's WebSite</MotionLink>
+        }}>
+            Arta's WebSite
+          </MotionLink>
           
           <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link, i) => <MotionLink key={link.path} to={link.path} className={`text-sm font-medium transition-colors relative
@@ -202,7 +206,6 @@ const Navbar = () => {
         </div>
       </div>
       
-      {/* Mobile menu with animations */}
       <MotionDiv className="md:hidden overflow-hidden bg-white dark:bg-gray-900" initial="closed" animate={isMenuOpen ? "open" : "closed"} variants={mobileMenuVariants}>
         <div className="px-4 py-5 shadow-lg">
           <div className="flex flex-col space-y-4">
@@ -254,4 +257,5 @@ const Navbar = () => {
       </MotionDiv>
     </MotionDiv>;
 };
+
 export default Navbar;
