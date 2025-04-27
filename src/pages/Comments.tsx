@@ -7,12 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface Comment {
   id: string;
   text: string;
   created_at: string;
-  profiles: {
+  user: {
     username: string | null;
   } | null;
 }
@@ -58,14 +59,23 @@ const Comments = () => {
           id,
           text,
           created_at,
-          profiles:user_id (
+          user:user_id (
             username
           )
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setComments(data || []);
+      
+      // Transform the data to match our Comment interface
+      const formattedComments = data?.map(comment => ({
+        id: comment.id,
+        text: comment.text,
+        created_at: comment.created_at,
+        user: comment.user
+      })) || [];
+      
+      setComments(formattedComments);
     } catch (error) {
       console.error('Error fetching comments:', error);
       toast({
@@ -135,6 +145,11 @@ const Comments = () => {
       hour: '2-digit',
       minute: '2-digit'
     }).format(date);
+  };
+
+  const getUserInitials = (username: string | null) => {
+    if (!username) return 'U';
+    return username[0].toUpperCase();
   };
 
   return (
@@ -218,13 +233,15 @@ const Comments = () => {
               {comments.map((comment) => (
                 <Card key={comment.id} className="p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-4">
-                    <div className="avatar-initials bg-purple-600 text-white">
-                      {comment.profiles?.username?.[0]?.toUpperCase() || 'U'}
-                    </div>
+                    <Avatar className="h-10 w-10 bg-purple-600 text-white">
+                      <AvatarFallback>
+                        {getUserInitials(comment.user?.username)}
+                      </AvatarFallback>
+                    </Avatar>
                     
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-medium">{comment.profiles?.username || 'Anonymous'}</h3>
+                        <h3 className="font-medium">{comment.user?.username || 'Anonymous'}</h3>
                         <span className="text-xs text-gray-500">{formatDate(comment.created_at)}</span>
                       </div>
                       
