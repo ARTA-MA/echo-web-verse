@@ -110,9 +110,7 @@ const Navbar = () => {
           scale: 1.05
         }} whileTap={{
           scale: 0.95
-        }}>
-            EchoWeb
-          </MotionLink>
+        }}>Arta's WebSite</MotionLink>
           
           <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link, i) => <MotionLink key={link.path} to={link.path} className={`text-sm font-medium transition-colors relative
