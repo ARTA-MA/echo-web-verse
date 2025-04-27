@@ -53,29 +53,52 @@ const Comments = () => {
 
   const fetchComments = async () => {
     try {
+      // First, let's check if there's a profiles table that might have the username
       const { data, error } = await supabase
         .from('comments')
         .select(`
           id,
           text,
           created_at,
-          user:user_id (
-            username
-          )
+          user_id
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Transform the data to match our Comment interface
-      const formattedComments = data?.map(comment => ({
-        id: comment.id,
-        text: comment.text,
-        created_at: comment.created_at,
-        user: comment.user
-      })) || [];
-      
-      setComments(formattedComments);
+      // If we have comments, let's get the usernames separately
+      if (data && data.length > 0) {
+        // Get unique user IDs from comments
+        const userIds = [...new Set(data.map(comment => comment.user_id))];
+        
+        // Fetch usernames from profiles table
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', userIds);
+          
+        if (profilesError) throw profilesError;
+        
+        // Create a map of user_id to username
+        const usernameMap = new Map();
+        profilesData?.forEach(profile => {
+          usernameMap.set(profile.id, profile.username);
+        });
+        
+        // Create properly formatted comments with username info
+        const formattedComments: Comment[] = data.map(comment => ({
+          id: comment.id,
+          text: comment.text,
+          created_at: comment.created_at,
+          user: {
+            username: usernameMap.get(comment.user_id) || null
+          }
+        }));
+        
+        setComments(formattedComments);
+      } else {
+        setComments([]);
+      }
     } catch (error) {
       console.error('Error fetching comments:', error);
       toast({
