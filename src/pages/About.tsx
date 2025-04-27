@@ -70,9 +70,7 @@ const About = () => {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">About Arta's WebSite</span>
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Our journey to create the most interactive and beautiful web experience.
-          </p>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">My journey to create the most interactive and beautiful web experience.</p>
         </div>
 
         {/* Timeline Section */}
